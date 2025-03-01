@@ -5,7 +5,10 @@ using Data.Configs;
 using Data.Repositories;
 using Domain;
 using MediatR;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Internet.Motors.VehicleCatalog;
 

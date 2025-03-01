@@ -1,8 +1,6 @@
-using MediatR;
-using Domain;
-using Notim.Outputs;
+using System;
 
-namespace Application.QueryHandlers
+namespace Application.QueryHandlers.ListAllVehicles
 {
 
     public record VehicleViewModel

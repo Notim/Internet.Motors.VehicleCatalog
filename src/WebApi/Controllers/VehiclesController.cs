@@ -1,9 +1,13 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Application.CommandHandlers.RegisterVehicle;
 using Application.CommandHandlers.ReserveCar;
 using Application.QueryHandlers.ListAllVehicles;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Internet.Motors.VehicleCatalog.Controllers
 {
