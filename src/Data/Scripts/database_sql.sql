@@ -21,6 +21,6 @@ CREATE TABLE VEHICLE (
     Price DECIMAL(12, 2) NULL,                           -- Car price
     ManufacturingDate DATE NULL,                         -- Manufacturing date
     SaleDate DATE NULL,                                  -- Sale date
-    SaleStatus NVARCHAR(20) NOT NULL DEFAULT 'Available',-- Sale status (default: 'Available')
+    Status NVARCHAR(20) NOT NULL,                        -- Sale status
     IsReserved BIT NOT NULL                              -- Reserved status (1 = reserved, 0 = not reserved)
 );

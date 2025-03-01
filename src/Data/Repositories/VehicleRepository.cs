@@ -16,6 +16,21 @@ namespace Data.Repositories
             _config = configOptions?.Value ?? throw new ArgumentNullException(nameof(configOptions));
         }
 
+        public async Task<Vehicle?> GetVehicleByVehicleId(Guid vehicleId)
+        {
+            
+            using (IDbConnection db = CreateConnection())
+            {
+                const string query = @"
+                    SELECT * 
+                    FROM VEHICLE 
+                    WHERE VehicleId = @VehicleId;
+                ";
+
+                return await db.QueryFirstOrDefaultAsync<Vehicle?>(query, new { VehicleId = vehicleId });
+            }
+        }
+
         public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync()
         {
             using (IDbConnection db = CreateConnection())
@@ -31,9 +46,9 @@ namespace Data.Repositories
             {
                 const string query = @"
                     INSERT INTO VEHICLE 
-                    (VehicleId, CarName, Brand, Model, Year, Color, FuelType, NumberOfDoors, Mileage, Price, ManufacturingDate, SaleDate, SaleStatus, IsReserved)
+                    (VehicleId, CarName, Brand, Model, Year, Color, FuelType, NumberOfDoors, Mileage, Price, ManufacturingDate, SaleDate, Status, IsReserved)
                     VALUES
-                    (@VehicleId, @CarName, @Brand, @Model, @Year, @Color, @FuelType, @NumberOfDoors, @Mileage, @Price, @ManufacturingDate, @SaleDate, @SaleStatus, @IsReserved);
+                    (@VehicleId, @CarName, @Brand, @Model, @Year, @Color, @FuelType, @NumberOfDoors, @Mileage, @Price, @ManufacturingDate, @SaleDate, @Status, @IsReserved);
                     SELECT CAST(SCOPE_IDENTITY() as INT);
                 ";
                 
@@ -59,7 +74,7 @@ namespace Data.Repositories
                         Price = @Price,
                         ManufacturingDate = @ManufacturingDate,
                         SaleDate = @SaleDate,
-                        SaleStatus = @SaleStatus,
+                        Status = @Status,
                         IsReserved = @IsReserved
                     WHERE Id = @Id;
                 ";

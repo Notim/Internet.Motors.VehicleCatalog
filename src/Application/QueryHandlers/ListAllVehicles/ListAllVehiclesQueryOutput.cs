@@ -1,10 +1,12 @@
-namespace Domain
+using MediatR;
+using Domain;
+using Notim.Outputs;
+
+namespace Application.QueryHandlers
 {
 
-    public class Vehicle
+    public record VehicleViewModel
     {
-
-        public int Id { get; set; }
 
         public Guid VehicleId { get; set; }
 
@@ -30,29 +32,9 @@ namespace Domain
 
         public DateTime? SaleDate { get; set; }
 
-        public SaleStatus? Status { get; set; }
+        public string? SaleStatus { get; set; }
 
         public bool IsReserved { get; set; }
-        
-        public void ReserveVehicle()
-        {
-            Status = SaleStatus.Reserved;
-            IsReserved = true;
-        }
-        
-        public void SellVehicle()
-        {
-            Status = SaleStatus.Sold;
-            IsReserved = false;
-            SaleDate = DateTime.Now;
-        }
-        
-        public void ReleaseVehicle()
-        {
-            Status = SaleStatus.Available;
-            IsReserved = false;
-            SaleDate = null;
-        }
 
     }
 
