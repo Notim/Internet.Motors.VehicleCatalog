@@ -1,4 +1,5 @@
 using Application.CommandHandlers.ReserveCar;
+using Application.Services.CreateNewOrderService;
 using Domain;
 using FluentAssertions;
 using Moq;
@@ -12,13 +13,15 @@ public class ReserveVehicleCommandHandlerTests
     {
         // Arrange
         var mockVehicleRepository = new Mock<IVehicleRepository>();
+        var createNewOrderService = new Mock<ICreateNewOrderService>();
         
         var vehicleId = Guid.NewGuid();
         var testVehicle = new Vehicle
         {
             VehicleId = vehicleId,
             Status = SaleStatus.Available,
-            IsReserved = false
+            IsReserved = false,
+            Price = 270000
         };
 
         mockVehicleRepository.Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
@@ -27,7 +30,7 @@ public class ReserveVehicleCommandHandlerTests
         mockVehicleRepository.Setup(repo => repo.UpdateVehicleAsync(It.IsAny<Vehicle>()))
                              .ReturnsAsync(true);
 
-        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object);
+        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object, createNewOrderService.Object);
         var command = new ReserveVehicleCommand
         {
             VehicleId = vehicleId,
@@ -54,6 +57,7 @@ public class ReserveVehicleCommandHandlerTests
     {
         // Arrange
         var mockVehicleRepository = new Mock<IVehicleRepository>();
+        var createNewOrderService = new Mock<ICreateNewOrderService>();
         
         var vehicleId = Guid.NewGuid();
         var testVehicle = new Vehicle
@@ -66,7 +70,7 @@ public class ReserveVehicleCommandHandlerTests
         mockVehicleRepository.Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
                              .ReturnsAsync(testVehicle);
 
-        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object);
+        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object, createNewOrderService.Object);
         var command = new ReserveVehicleCommand
         {
             VehicleId = vehicleId,
@@ -90,6 +94,7 @@ public class ReserveVehicleCommandHandlerTests
     {
         // Arrange
         var mockVehicleRepository = new Mock<IVehicleRepository>();
+        var createNewOrderService = new Mock<ICreateNewOrderService>();
         
         var vehicleId = Guid.NewGuid();
         var testVehicle = new Vehicle
@@ -102,7 +107,7 @@ public class ReserveVehicleCommandHandlerTests
         mockVehicleRepository.Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
                              .ReturnsAsync(testVehicle);
 
-        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object);
+        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object, createNewOrderService.Object);
         var command = new ReserveVehicleCommand
         {
             VehicleId = vehicleId,
@@ -126,13 +131,14 @@ public class ReserveVehicleCommandHandlerTests
     {
         // Arrange
         var mockVehicleRepository = new Mock<IVehicleRepository>();
+        var createNewOrderService = new Mock<ICreateNewOrderService>();
 
         var vehicleId = Guid.NewGuid();
 
         mockVehicleRepository.Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
                              .ReturnsAsync((Vehicle)null); // Simulate not found
 
-        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object);
+        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object, createNewOrderService.Object);
         var command = new ReserveVehicleCommand
         {
             VehicleId = vehicleId,
@@ -156,13 +162,15 @@ public class ReserveVehicleCommandHandlerTests
     {
         // Arrange
         var mockVehicleRepository = new Mock<IVehicleRepository>();
+        var createNewOrderService = new Mock<ICreateNewOrderService>();
 
         var vehicleId = Guid.NewGuid();
         var testVehicle = new Vehicle
         {
             VehicleId = vehicleId,
             Status = SaleStatus.Available,
-            IsReserved = false
+            IsReserved = false,
+            Price = 1000
         };
 
         mockVehicleRepository.Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
@@ -171,7 +179,7 @@ public class ReserveVehicleCommandHandlerTests
         mockVehicleRepository.Setup(repo => repo.UpdateVehicleAsync(It.IsAny<Vehicle>()))
                              .ReturnsAsync(false);
 
-        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object);
+        var handler = new ReserveVehicleCommandHandler(mockVehicleRepository.Object, createNewOrderService.Object);
         var command = new ReserveVehicleCommand
         {
             VehicleId = vehicleId,

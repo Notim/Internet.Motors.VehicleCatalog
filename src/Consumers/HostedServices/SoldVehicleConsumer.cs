@@ -1,21 +1,21 @@
-using Application.CommandHandlers.ReleseCar;
+using Application.CommandHandlers.SoldCar;
 using Confluent.Kafka;
 using MediatR;
 using Messaging;
 using Messaging.Consumer;
 using Microsoft.Extensions.Options;
 
-namespace Internet.Motors.VehicleCatalog.Consumers;
+namespace Presentation.Consumers.HostedServices;
 
-public class ReleaseVehicleConsumer : KafkaConsumer<ReleaseVehicleCommand>
+public class SoldVehicleConsumer : KafkaConsumer<SoldVehicleCommand>
 {
 
-    private readonly ILogger<KafkaConsumer<ReleaseVehicleCommand>> _logger;
+    private readonly ILogger<KafkaConsumer<SoldVehicleCommand>> _logger;
     private readonly IServiceProvider _serviceProvider;
 
-    public ReleaseVehicleConsumer(
+    public SoldVehicleConsumer(
         IOptions<ConsumerConfig> consumerConfig, 
-        ILogger<KafkaConsumer<ReleaseVehicleCommand>> logger,
+        ILogger<KafkaConsumer<SoldVehicleCommand>> logger,
         IServiceProvider serviceProvider
     )
         : base(consumerConfig, logger)
@@ -24,9 +24,9 @@ public class ReleaseVehicleConsumer : KafkaConsumer<ReleaseVehicleCommand>
         _serviceProvider = serviceProvider;
     }
 
-    protected override string GetTopic() => "order-canceled";
+    protected override string GetTopic() => Topics.OrderFinalizedTopic;
 
-    protected override async Task HandleAsync(Envelop<ReleaseVehicleCommand> envelop, CancellationToken cancellationToken)
+    protected override async Task HandleAsync(Envelop<SoldVehicleCommand> envelop, CancellationToken cancellationToken)
     {
         try
         {
@@ -34,8 +34,8 @@ public class ReleaseVehicleConsumer : KafkaConsumer<ReleaseVehicleCommand>
             {
                 var mediatr = scope.ServiceProvider.GetRequiredService<IMediator>();
                 
-                var output = await mediatr.Send(envelop, cancellationToken);
-                _logger.LogInformation("response from use case {@Output}", output);
+                var output = await mediatr.Send(envelop.Value!, cancellationToken);
+                _logger.LogInformation("response from use case {@Output} {@Errors}", output.Messages, output.FaultMessages);
             }
         }
         catch (Exception e)

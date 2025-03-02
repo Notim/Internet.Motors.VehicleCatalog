@@ -46,16 +46,6 @@ namespace Application.CommandHandlers.ReserveCar
                 return output;
             }
 
-            vehicle.ReserveVehicle();
-
-            var updateResult = await _vehicleRepository.UpdateVehicleAsync(vehicle);
-
-            if (!updateResult)
-            {
-                output.AddFault(new Fault(FaultType.InvalidOperation, $"Failed to reserve the vehicle with ID {request.VehicleId}."));
-                return output;
-            }
-
             await _createNewOrderService.CreateNewOrderAsync(
                 new CreateNewOrder(
                     orderId: Guid.NewGuid(), 
@@ -66,6 +56,15 @@ namespace Application.CommandHandlers.ReserveCar
                 ), 
                 cancellationToken
             );
+            
+            vehicle.ReserveVehicle();
+            
+            var updateResult = await _vehicleRepository.UpdateVehicleAsync(vehicle);
+            if (!updateResult)
+            {
+                output.AddFault(new Fault(FaultType.InvalidOperation, $"Failed to reserve the vehicle with ID {request.VehicleId}."));
+                return output;
+            }
 
             output.AddMessage($"Vehicle with ID {request.VehicleId} successfully reserved.");
             return output;

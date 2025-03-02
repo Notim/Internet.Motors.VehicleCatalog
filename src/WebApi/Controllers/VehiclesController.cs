@@ -7,7 +7,7 @@ using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Internet.Motors.VehicleCatalog.Controllers
+namespace Presentation.WebApi.Controllers
 {
     [ApiController]
     [Route("api/vehicle")]
@@ -41,6 +41,8 @@ namespace Internet.Motors.VehicleCatalog.Controllers
 
                 var output = await _mediator.Send(vehicle, cancellationToken);
                 
+                _logger.LogInformation("Output Returns {@Output}", output);
+                
                 if (!output.IsValid)
                 {
                     return BadRequest(output.FaultMessages);
@@ -65,6 +67,8 @@ namespace Internet.Motors.VehicleCatalog.Controllers
                     Status = saleStatus
                 }, cancellationToken);
                 
+                _logger.LogInformation("Output Returns {@Output}", output);
+                
                 if (!output.IsValid)
                 {
                     return BadRequest(output.FaultMessages);
@@ -85,6 +89,9 @@ namespace Internet.Motors.VehicleCatalog.Controllers
             try
             {
                 var output = await _mediator.Send(reserveVehicleRequest, cancellationToken);
+                
+                _logger.LogInformation("Output Returns {@Output}", output);
+                
                 if (!output.IsValid)
                 {
                     return BadRequest(output.FaultMessages);
@@ -105,6 +112,9 @@ namespace Internet.Motors.VehicleCatalog.Controllers
             try
             {
                 var output = await _mediator.Send(soldVehicleRequest, cancellationToken);
+                
+                _logger.LogInformation("Output Returns {@Output}", output);
+                
                 if (!output.IsValid)
                 {
                     return BadRequest(output.FaultMessages);
@@ -125,6 +135,9 @@ namespace Internet.Motors.VehicleCatalog.Controllers
             try
             {
                 var output = await _mediator.Send(releaseVehicleCommand, cancellationToken);
+                
+                _logger.LogInformation("Output Returns {@Output}", output);
+                
                 if (!output.IsValid)
                 {
                     return BadRequest(output.FaultMessages);

@@ -7,18 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MediatR" Version="11.1.0" />
-      <PackageReference Include="Notim.Outputs" Version="3.0.0" />
+        <PackageReference Include="MediatR" Version="11.1.0"/>
+        <PackageReference Include="Notim.Outputs" Version="3.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3"/>
+        <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Domain\Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Logging.Abstractions">
-        <HintPath>..\..\..\..\.nuget\packages\microsoft.extensions.logging.abstractions\8.0.2\lib\net8.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-      </Reference>
+        <ProjectReference Include="..\Domain\Domain.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 using System.Globalization;
 using Application.CommandHandlers.RegisterVehicle;
+using Application.CommandHandlers.ReleseCar;
 using Application.Services.CreateNewOrderService;
 using Confluent.Kafka;
 using Data.Configs;
@@ -9,9 +10,10 @@ using MediatR;
 using Messaging.Producer;
 using Messaging.Services;
 using Microsoft.AspNetCore.Localization;
+using Presentation.Consumers.HostedServices;
 using Serilog;
 
-namespace Presentation.WebApi;
+namespace Presentation.Consumers;
 
 internal class Program
 {
@@ -25,21 +27,19 @@ internal class Program
             configuration.ReadFrom.Configuration(context.Configuration);
         });
 
-        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+        builder.Services.Configure<DatabaseConfig>(builder.Configuration.GetSection(nameof(DatabaseConfig)));
 
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        builder.Services.AddControllers();
-
+        builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+        
+        builder.Services.Configure<ConsumerConfig>(builder.Configuration.GetSection(nameof(ConsumerConfig)));
         builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
         builder.Services.AddScoped<IKafkaProducer<CreateNewOrder>, MessageProducer<CreateNewOrder>>();
         builder.Services.AddScoped<ICreateNewOrderService, CreateNewOrderService>();
 
-        builder.Services.Configure<DatabaseConfig>(builder.Configuration.GetSection(nameof(DatabaseConfig)));
+        builder.Services.AddMediatR(typeof(ReleaseVehicleCommandHandler).Assembly);
 
-        builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
-
-        builder.Services.AddMediatR(typeof(RegisterVehicleCommandHandler).Assembly);
+        builder.Services.AddHostedService<ReleaseVehicleConsumer>();
+        builder.Services.AddHostedService<SoldVehicleConsumer>();
 
         var app = builder.Build();
 
@@ -59,15 +59,6 @@ internal class Program
         };
 
         app.UseRequestLocalization(localizationOptions);
-
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseHttpsRedirection();
-        app.MapControllers();
 
         app.Run();
     }
