@@ -16,7 +16,7 @@ public class RegisterVehicleCommandHandlerTests
         mockVehicleRepository.Setup(repo => repo.InsertVehicleAsync(It.IsAny<Vehicle>()))
                              .ReturnsAsync(1);
 
-        var handler = new RegisterVehicleCommandHandler(mockVehicleRepository.Object);
+        var handler = new RegisterVehicleCommandHandler(mockVehicleRepository.Object, new RegisterVehicleCommandValidation());
 
         var command = new RegisterVehicleCommand
         {

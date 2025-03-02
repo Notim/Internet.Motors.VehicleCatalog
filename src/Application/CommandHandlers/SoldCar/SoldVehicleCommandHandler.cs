@@ -51,8 +51,6 @@ namespace Application.CommandHandlers.SoldCar
                 return output;
             }
 
-            // TODO: publish message on kafka topic car-reserved
-
             output.AddMessage($"Vehicle with ID {request.VehicleId} has been marked as sold.");
             return output;
         }

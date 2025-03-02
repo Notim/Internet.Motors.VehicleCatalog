@@ -3,6 +3,7 @@ using Application.Services.CreateNewOrderService;
 using Domain;
 using FluentAssertions;
 using Moq;
+using UnitTests.Fakers;
 
 namespace UnitTests.CommandHandlers;
 
@@ -16,13 +17,9 @@ public class ReserveVehicleCommandHandlerTests
         var createNewOrderService = new Mock<ICreateNewOrderService>();
         
         var vehicleId = Guid.NewGuid();
-        var testVehicle = new Vehicle
-        {
-            VehicleId = vehicleId,
-            Status = SaleStatus.Available,
-            IsReserved = false,
-            Price = 270000
-        };
+        var testVehicle = VehicleFaker.GetFaker()
+                                      .RuleFor(x => x.Status, _ => SaleStatus.Available)
+                                      .Generate();
 
         mockVehicleRepository.Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
                              .ReturnsAsync(testVehicle);
@@ -60,12 +57,9 @@ public class ReserveVehicleCommandHandlerTests
         var createNewOrderService = new Mock<ICreateNewOrderService>();
         
         var vehicleId = Guid.NewGuid();
-        var testVehicle = new Vehicle
-        {
-            VehicleId = vehicleId,
-            Status = SaleStatus.Reserved,
-            IsReserved = true
-        };
+        var testVehicle = VehicleFaker.GetFaker()
+                                      .RuleFor(x => x.Status, _ => SaleStatus.Reserved)
+                                      .Generate();
 
         mockVehicleRepository.Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
                              .ReturnsAsync(testVehicle);
@@ -97,12 +91,9 @@ public class ReserveVehicleCommandHandlerTests
         var createNewOrderService = new Mock<ICreateNewOrderService>();
         
         var vehicleId = Guid.NewGuid();
-        var testVehicle = new Vehicle
-        {
-            VehicleId = vehicleId,
-            Status = SaleStatus.Sold, // Not available
-            IsReserved = false
-        };
+        var testVehicle = VehicleFaker.GetFaker()
+                                      .RuleFor(x => x.Status, _ => SaleStatus.Sold)
+                                      .Generate();
 
         mockVehicleRepository.Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
                              .ReturnsAsync(testVehicle);
@@ -165,13 +156,9 @@ public class ReserveVehicleCommandHandlerTests
         var createNewOrderService = new Mock<ICreateNewOrderService>();
 
         var vehicleId = Guid.NewGuid();
-        var testVehicle = new Vehicle
-        {
-            VehicleId = vehicleId,
-            Status = SaleStatus.Available,
-            IsReserved = false,
-            Price = 1000
-        };
+        var testVehicle = VehicleFaker.GetFaker()
+                                      .RuleFor(x => x.Status, _ => SaleStatus.Available)
+                                      .Generate();
 
         mockVehicleRepository.Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
                              .ReturnsAsync(testVehicle);

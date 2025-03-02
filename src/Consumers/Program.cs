@@ -3,15 +3,19 @@ using Application.CommandHandlers.RegisterVehicle;
 using Application.CommandHandlers.ReleseCar;
 using Application.Services.CreateNewOrderService;
 using Confluent.Kafka;
+using Data.Cache;
 using Data.Configs;
+using Data.Dao;
 using Data.Repositories;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Messaging.Producer;
 using Messaging.Services;
 using Microsoft.AspNetCore.Localization;
 using Presentation.Consumers.HostedServices;
 using Serilog;
+using StackExchange.Redis;
 
 namespace Presentation.Consumers;
 
@@ -28,7 +32,16 @@ internal class Program
         });
 
         builder.Services.Configure<DatabaseConfig>(builder.Configuration.GetSection(nameof(DatabaseConfig)));
-
+        
+        builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+        {
+            var configuration = builder.Configuration.GetConnectionString("RedisConnection");
+            
+            return ConnectionMultiplexer.Connect(configuration);
+        });
+        
+        builder.Services.AddScoped<IVehicleDao, VehicleDao>();
+        builder.Services.AddScoped<IVehicleCache, VehicleCache>();
         builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
         
         builder.Services.Configure<ConsumerConfig>(builder.Configuration.GetSection(nameof(ConsumerConfig)));
@@ -37,7 +50,8 @@ internal class Program
         builder.Services.AddScoped<ICreateNewOrderService, CreateNewOrderService>();
 
         builder.Services.AddMediatR(typeof(ReleaseVehicleCommandHandler).Assembly);
-
+        builder.Services.AddScoped<IValidator<RegisterVehicleCommand>, RegisterVehicleCommandValidation>();
+        
         builder.Services.AddHostedService<ReleaseVehicleConsumer>();
         builder.Services.AddHostedService<SoldVehicleConsumer>();
 

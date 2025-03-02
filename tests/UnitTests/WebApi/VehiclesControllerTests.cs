@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Application.CommandHandlers.RegisterVehicle;
 using Application.CommandHandlers.ReleseCar;
 using Application.CommandHandlers.ReserveCar;
@@ -46,14 +47,21 @@ namespace UnitTests.WebApi
         public async Task RegisterVehicleAction_Should_Return_BadRequest_When_Command_Fields_Are_Invalid()
         {
             // Arrange
-            var command = new RegisterVehicleCommand { CarName = "", Brand = "" };
+            var command = new RegisterVehicleCommand();
+
+            var output = new Output();
+            output.AddFault(new Fault(FaultType.InvalidInput, "Vehicle Name and Brand are required."));
+            _mediatorMock.Setup(x => x.Send(It.IsAny<RegisterVehicleCommand>(), It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(output);
 
             // Act
             var result = await _controller.RegisterVehicleAction(command, CancellationToken.None);
 
             // Assert
-            result.Should().BeOfType<BadRequestObjectResult>()
-                .Which.Value.Should().Be("Vehicle Name and Brand are required.");
+            result.Should().BeOfType<UnprocessableEntityObjectResult>();
+            
+            ((ReadOnlyCollection<string>) result.Should().BeOfType<UnprocessableEntityObjectResult>().Which.Value)
+                .ToList().Should().Contain("Vehicle Name and Brand are required.");
         }
 
         [Fact]

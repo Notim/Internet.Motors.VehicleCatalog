@@ -50,8 +50,6 @@ namespace Application.CommandHandlers.ReleseCar
                 return output;
             }
 
-            // TODO: publish message on kafka topic car-reserved
-
             output.AddMessage($"Vehicle with ID {request.VehicleId} successfully released.");
             return output;
         }

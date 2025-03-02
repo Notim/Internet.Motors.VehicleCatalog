@@ -400,4 +400,4 @@ Para executar os testes unitários execute o comando abaixo:
 dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
 ```
 
-![img.png](img.png)
+![img_2.png](img_2.png)

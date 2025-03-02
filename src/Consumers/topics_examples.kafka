@@ -1,9 +1,9 @@
 PRODUCER release vehicle
 topic: order-canceled
-key: 881c6023-138b-4ef0-9b72-ecdb75c52c88
+key: dbe6fa0c-68cc-4c37-924d-911a4452c49c
 headers: header1=value1, header2=value2
 {
-  "vehicleId": "881c6023-138b-4ef0-9b72-ecdb75c52c88"
+  "vehicleId": "dbe6fa0c-68cc-4c37-924d-911a4452c49c"
 }
 
 ###

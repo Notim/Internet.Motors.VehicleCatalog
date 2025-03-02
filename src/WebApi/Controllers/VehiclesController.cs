@@ -6,6 +6,7 @@ using Application.QueryHandlers.ListAllVehicles;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Notim.Outputs;
 
 namespace Presentation.WebApi.Controllers
 {
@@ -34,17 +35,15 @@ namespace Presentation.WebApi.Controllers
 
             try
             {
-                if (string.IsNullOrWhiteSpace(vehicle.CarName) || string.IsNullOrWhiteSpace(vehicle.Brand))
-                {
-                    return BadRequest("Vehicle Name and Brand are required.");
-                }
-
                 var output = await _mediator.Send(vehicle, cancellationToken);
                 
                 _logger.LogInformation("Output Returns {@Output}", output);
                 
                 if (!output.IsValid)
                 {
+                    if (output.Fault?.FaultType is FaultType.InvalidInput)
+                        return UnprocessableEntity(output.FaultMessages);
+                    
                     return BadRequest(output.FaultMessages);
                 }
 

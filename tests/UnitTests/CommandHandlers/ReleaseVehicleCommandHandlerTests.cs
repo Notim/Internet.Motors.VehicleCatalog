@@ -1,9 +1,9 @@
 using Application.CommandHandlers.ReleseCar;
 using Domain;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.AutoMock;
+using UnitTests.Fakers;
 
 namespace UnitTests.CommandHandlers;
 
@@ -16,12 +16,9 @@ public class ReleaseVehicleCommandHandlerTests
         var mocker = new AutoMocker();
 
         var vehicleId = Guid.NewGuid();
-        var testVehicle = new Vehicle
-        {
-            VehicleId = vehicleId,
-            Status = SaleStatus.Reserved,
-            IsReserved = true
-        };
+        var testVehicle = VehicleFaker.GetFaker()
+                                      .RuleFor(x => x.Status, _ => SaleStatus.Reserved)
+                                      .Generate();
 
         mocker.GetMock<IVehicleRepository>()
               .Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
@@ -61,12 +58,9 @@ public class ReleaseVehicleCommandHandlerTests
         var mocker = new AutoMocker();
 
         var vehicleId = Guid.NewGuid();
-        var testVehicle = new Vehicle
-        {
-            VehicleId = vehicleId,
-            Status = SaleStatus.Available,
-            IsReserved = false
-        };
+        var testVehicle = VehicleFaker.GetFaker()
+                                      .RuleFor(x => x.Status, _ => SaleStatus.Available)
+                                      .Generate();
 
         // Mock repository behavior
         mocker.GetMock<IVehicleRepository>()
@@ -101,12 +95,9 @@ public class ReleaseVehicleCommandHandlerTests
         var mocker = new AutoMocker();
 
         var vehicleId = Guid.NewGuid();
-        var testVehicle = new Vehicle
-        {
-            VehicleId = vehicleId,
-            Status = SaleStatus.Sold,
-            IsReserved = false
-        };
+        var testVehicle = VehicleFaker.GetFaker()
+                                      .RuleFor(x => x.Status, _ => SaleStatus.Sold)
+                                      .Generate();
 
         // Mock repository behavior
         mocker.GetMock<IVehicleRepository>()
@@ -144,7 +135,7 @@ public class ReleaseVehicleCommandHandlerTests
         // Mock repository behavior
         mocker.GetMock<IVehicleRepository>()
               .Setup(repo => repo.GetVehicleByVehicleId(vehicleId))
-              .ReturnsAsync((Vehicle)null);
+              .ReturnsAsync((Vehicle) null);
 
         var handler = mocker.CreateInstance<ReleaseVehicleCommandHandler>();
         var command = new ReleaseVehicleCommand
@@ -173,12 +164,9 @@ public class ReleaseVehicleCommandHandlerTests
         var mocker = new AutoMocker();
 
         var vehicleId = Guid.NewGuid();
-        var testVehicle = new Vehicle
-        {
-            VehicleId = vehicleId,
-            Status = SaleStatus.Reserved,
-            IsReserved = true
-        };
+        var testVehicle = VehicleFaker.GetFaker()
+                                      .RuleFor(x => x.Status, _ => SaleStatus.Reserved)
+                                      .Generate();
 
         // Mock repository behavior
         mocker.GetMock<IVehicleRepository>()

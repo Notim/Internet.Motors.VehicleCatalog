@@ -1,10 +1,9 @@
 using Application.QueryHandlers.ListAllVehicles;
-using Bogus;
 using Domain;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.AutoMock;
+using UnitTests.Fakers;
 
 namespace UnitTests.QueryHandlers;
 
@@ -16,16 +15,12 @@ public class ListAllVehiclesQueryHandlerTests
         // Arrange
         var mocker = new AutoMocker();
 
-        var vehicles = new List<Vehicle>
-        {
-            new Vehicle { VehicleId = Guid.NewGuid(), Status = SaleStatus.Available, IsReserved = false },
-            new Vehicle { VehicleId = Guid.NewGuid(), Status = SaleStatus.Reserved, IsReserved = true }
-        };
+        var testVehicles = VehicleFaker.GetFaker().Generate(2);
 
         // Mock repository behavior to return a list of vehicles.
         mocker.GetMock<IVehicleRepository>()
               .Setup(repo => repo.GetAllVehiclesAsync())
-              .ReturnsAsync(vehicles);
+              .ReturnsAsync(testVehicles);
 
         var handler = mocker.CreateInstance<ListAllVehiclesQueryHandler>();
         var query = new ListAllVehiclesQuery();
@@ -37,7 +32,7 @@ public class ListAllVehiclesQueryHandlerTests
         result.Should().NotBeNull();
         result.IsValid.Should().BeTrue();
         result.Result.Should().HaveCount(2);
-        foreach (var vehicle in vehicles)
+        foreach (var vehicle in testVehicles)
         {
             result.Result.Should().ContainSingle(v =>
                 v.VehicleId == vehicle.VehicleId &&
@@ -95,24 +90,11 @@ public class ListAllVehiclesQueryHandlerTests
     {
         // Arrange
         var mocker = new AutoMocker();
-        var faker = new Faker<Vehicle>()
-            .RuleFor(v => v.VehicleId, f => f.Random.Guid())
-            .RuleFor(v => v.CarName, f => f.Vehicle.Model())
-            .RuleFor(v => v.Brand, f => f.Vehicle.Manufacturer())
-            .RuleFor(v => v.Model, f => f.Commerce.ProductName())
-            .RuleFor(v => v.Year, f => f.Date.Past(30).Year)
-            .RuleFor(v => v.Color, f => f.Commerce.Color())
-            .RuleFor(v => v.FuelType, f => f.PickRandom(new[] { "Gasoline", "Diesel", "Electric" }))
-            .RuleFor(v => v.NumberOfDoors, f => f.Random.Int(2, 5))
-            .RuleFor(v => v.Mileage, f => f.Finance.Amount(0, 200000))
-            .RuleFor(v => v.Price, f => f.Finance.Amount(5000, 100000))
-            .RuleFor(v => v.Status, f => f.PickRandom<SaleStatus>())
-            .RuleFor(v => v.IsReserved, (f, v) => v.Status == SaleStatus.Reserved);
+        var vehicles = VehicleFaker.GetFaker().Generate(20);
 
-        var vehicles = faker.Generate(20);
-        vehicles.Take(10).ToList().ForEach(v => v.Status = SaleStatus.Available);
-        vehicles.Skip(10).Take(5).ToList().ForEach(v => v.Status = SaleStatus.Sold);
-        vehicles.Skip(15).Take(5).ToList().ForEach(v => v.Status = SaleStatus.Reserved);
+        vehicles.Take(10).ToList().ForEach(v => v.ReleaseVehicle());
+        vehicles.Skip(10).Take(5).ToList().ForEach(v => v.SellVehicle());
+        vehicles.Skip(15).Take(5).ToList().ForEach(v => v.ReserveVehicle());
 
         // Mock repository to return the generated list.
         mocker.GetMock<IVehicleRepository>()

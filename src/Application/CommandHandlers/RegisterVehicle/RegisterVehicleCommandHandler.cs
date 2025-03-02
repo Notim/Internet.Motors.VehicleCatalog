@@ -2,38 +2,39 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Notim.Outputs;
+using Notim.Outputs.FluentValidation;
 
 namespace Application.CommandHandlers.RegisterVehicle
 {
     public class RegisterVehicleCommandHandler : IRequestHandler<RegisterVehicleCommand, Output>
     {
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly IValidator<RegisterVehicleCommand> _validator;
 
-        public RegisterVehicleCommandHandler(IVehicleRepository vehicleRepository)
+        public RegisterVehicleCommandHandler(
+            IVehicleRepository vehicleRepository,
+            IValidator<RegisterVehicleCommand> validator
+        )
         {
             _vehicleRepository = vehicleRepository;
+            _validator = validator;
         }
 
         public async Task<Output> Handle(RegisterVehicleCommand request, CancellationToken cancellationToken)
         {
             var output = new Output();
-            
-            var vehicle = new Vehicle
+
+            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+            if (validationResult.IsValid is false)
             {
-                VehicleId = Guid.NewGuid(),
-                CarName = request.CarName,
-                Brand = request.Brand,
-                Model = request.Model,
-                Year = request.Year,
-                Color = request.Color,
-                FuelType = request.FuelType,
-                NumberOfDoors = request.NumberOfDoors,
-                Mileage = request.Mileage,
-                Price = request.Price,
-                Status = SaleStatus.Available
-            };
+                output.AddValidationResult(validationResult);
+                return output;
+            }
+
+            var vehicle = request.MapToDomainVehicle();
 
             var vehicleId = await _vehicleRepository.InsertVehicleAsync(vehicle);
 
@@ -41,5 +42,6 @@ namespace Application.CommandHandlers.RegisterVehicle
 
             return output;
         }
+
     }
 }

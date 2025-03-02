@@ -43,7 +43,7 @@ services:
       - no-new-privileges:true
     cap_drop:
       - NET_RAW
-    entrypoint: [ '/bin/sh', '-c']
+    entrypoint: [ '/bin/sh', '-c' ]
     command: |
       "
       kafka-topics --bootstrap-server kafka:29092 --list
@@ -92,5 +92,13 @@ services:
         sleep 19
         /opt/mssql-tools/bin/sqlcmd -U sa -P Admin@12345 -l 30 -e -i /scripts/database_sql.sql
         sleep infinity
+    networks:
+      - kafka_network
+  
+  redis:
+    container_name: internet_motors_redis
+    image: redis:7.0
+    ports:
+      - "6379:6379"
     networks:
       - kafka_network

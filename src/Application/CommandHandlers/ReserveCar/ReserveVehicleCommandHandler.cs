@@ -52,7 +52,7 @@ namespace Application.CommandHandlers.ReserveCar
                     vehicleId: vehicle.VehicleId,
                     customerDocument: request.CustomerDocument,
                     carName: vehicle.CarName,
-                    price: vehicle.Price!.Value
+                    price: vehicle.Price
                 ), 
                 cancellationToken
             );
