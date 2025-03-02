@@ -1,0 +1,40 @@
+name: Build, Restore, and Test with Code Coverage
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published  # Trigger when a release is published
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x' # Use .NET 8.0 since your project targets net8.0
+
+      - name: Restore Dependencies
+        run: dotnet restore
+      
+      - name: Build Solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run Unit Tests with Code Coverage
+        run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      
+      - name: Upload Code Coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: ./TestResults
