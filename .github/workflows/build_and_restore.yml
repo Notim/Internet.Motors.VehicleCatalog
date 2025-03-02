@@ -51,7 +51,7 @@ jobs:
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./TestResults/coverage.cobertura.xml
+          files: ${{ env.COVERAGE_FILE_PATH }}
           flags: unittests
           name: CodeCoverageReport
           fail_ci_if_error: false
