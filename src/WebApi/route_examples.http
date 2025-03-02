@@ -1,4 +1,4 @@
-POST https://localhost:7058/api/vehicle/register
+POST https://localhost:5001/api/vehicle/register
 Accept: */*
 Content-Type: application/json
 
@@ -17,17 +17,17 @@ Content-Type: application/json
 
 ### 
 
-GET https://localhost:7058/api/vehicle?saleStatus=0
+GET https://localhost:5001/api/vehicle?saleStatus=0
 Accept: */*
 
 ###
 
-GET https://localhost:7058/api/vehicle
+GET https://localhost:5001/api/vehicle
 Accept: */*
 
 ###
 
-POST https://localhost:7058/api/vehicle/552e9913-573c-4bb9-9bb7-78395e31a57a/reserve
+POST https://localhost:5001/api/vehicle/552e9913-573c-4bb9-9bb7-78395e31a57a/reserve
 Accept: */*
 Content-Type: application/json
 
@@ -38,7 +38,7 @@ Content-Type: application/json
 
 ###
 
-POST https://localhost:7058/api/vehicle/1ecbfa0f-545c-41a3-886f-6964d967fea3/sell
+POST https://localhost:5001/api/vehicle/1ecbfa0f-545c-41a3-886f-6964d967fea3/sell
 Accept: */*
 Content-Type: application/json
 
@@ -48,7 +48,7 @@ Content-Type: application/json
 
 ###
 
-POST https://localhost:7058/api/vehicle/552e9913-573c-4bb9-9bb7-78395e31a57a/release
+POST https://localhost:5001/api/vehicle/552e9913-573c-4bb9-9bb7-78395e31a57a/release
 Accept: */*
 Content-Type: application/json
 
