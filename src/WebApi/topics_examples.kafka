@@ -1,17 +1,17 @@
 PRODUCER release vehicle
 topic: order-canceled
-key: 706c6fee-f1d5-4d5d-a0b8-6dfeedb11c93
+key: 881c6023-138b-4ef0-9b72-ecdb75c52c88
 headers: header1=value1, header2=value2
 {
-  "vehicleId": "706c6fee-f1d5-4d5d-a0b8-6dfeedb11c93"
+  "vehicleId": "881c6023-138b-4ef0-9b72-ecdb75c52c88"
 }
 
 ###
 
 PRODUCER sold vehicle
 topic: order-finalized
-key: 706c6fee-f1d5-4d5d-a0b8-6dfeedb11c93
+key: 9d5f72e6-410e-4ac9-b7b4-23a386aa454f
 headers: header1=value1, header2=value2
 {
-  "vehicleId": "706c6fee-f1d5-4d5d-a0b8-6dfeedb11c93"
+  "vehicleId": "9d5f72e6-410e-4ac9-b7b4-23a386aa454f"
 }
