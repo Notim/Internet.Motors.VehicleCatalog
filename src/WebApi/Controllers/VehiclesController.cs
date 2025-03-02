@@ -1,18 +1,16 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Application.CommandHandlers.RegisterVehicle;
+using Application.CommandHandlers.ReleseCar;
 using Application.CommandHandlers.ReserveCar;
+using Application.CommandHandlers.SoldCar;
 using Application.QueryHandlers.ListAllVehicles;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Internet.Motors.VehicleCatalog.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/vehicle")]
     public class VehiclesController : ControllerBase
     {
 
@@ -29,7 +27,7 @@ namespace Internet.Motors.VehicleCatalog.Controllers
         }
         
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterVehicle([FromBody] RegisterVehicleCommand? vehicle, CancellationToken cancellationToken)
+        public async Task<IActionResult> RegisterVehicleAction([FromBody] RegisterVehicleCommand? vehicle, CancellationToken cancellationToken)
         {
             if (vehicle == null)
                 return BadRequest("Vehicle data is required.");
@@ -58,7 +56,7 @@ namespace Internet.Motors.VehicleCatalog.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAllVehicles([FromQuery] SaleStatus? saleStatus, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllVehiclesAction([FromQuery] SaleStatus? saleStatus, CancellationToken cancellationToken)
         {
             try
             {
@@ -81,12 +79,52 @@ namespace Internet.Motors.VehicleCatalog.Controllers
             }
         }
         
-        [HttpPost]
-        public async Task<IActionResult> ReserveVehicleVehicles([FromBody] ReserveVehicleCommand reserveVehicleRequest, CancellationToken cancellationToken)
+        [HttpPost("{vehicleId:Guid}/reserve")]
+        public async Task<IActionResult> ReserveVehicleAction([FromBody] ReserveVehicleCommand reserveVehicleRequest, CancellationToken cancellationToken)
         {
             try
             {
                 var output = await _mediator.Send(reserveVehicleRequest, cancellationToken);
+                if (!output.IsValid)
+                {
+                    return BadRequest(output.FaultMessages);
+                }
+
+                return Accepted();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Error while registering vehicle.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        
+        [HttpPost("{vehicleId:Guid}/sell")] // TODO: use kafka worker
+        public async Task<IActionResult> SoldVehicleAction([FromBody] SoldVehicleCommand soldVehicleRequest, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var output = await _mediator.Send(soldVehicleRequest, cancellationToken);
+                if (!output.IsValid)
+                {
+                    return BadRequest(output.FaultMessages);
+                }
+
+                return Accepted();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Error while mark as sold vehicle.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        
+        [HttpPost("{vehicleId:Guid}/release")] // TODO: use kafka worker
+        public async Task<IActionResult> ReleaseVehicleAction([FromBody] ReleaseVehicleCommand releaseVehicleCommand, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var output = await _mediator.Send(releaseVehicleCommand, cancellationToken);
                 if (!output.IsValid)
                 {
                     return BadRequest(output.FaultMessages);

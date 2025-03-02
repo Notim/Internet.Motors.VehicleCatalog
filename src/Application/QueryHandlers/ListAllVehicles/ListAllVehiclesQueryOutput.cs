@@ -26,11 +26,9 @@ namespace Application.QueryHandlers.ListAllVehicles
 
         public decimal? Price { get; set; }
 
-        public DateTime? ManufacturingDate { get; set; }
-
         public DateTime? SaleDate { get; set; }
 
-        public string? SaleStatus { get; set; }
+        public string? Status { get; set; }
 
         public bool IsReserved { get; set; }
 

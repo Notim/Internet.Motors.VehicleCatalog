@@ -13,7 +13,7 @@ namespace Application.CommandHandlers.RegisterVehicle
 
         public RegisterVehicleCommandHandler(IVehicleRepository vehicleRepository)
         {
-            _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
+            _vehicleRepository = vehicleRepository;
         }
 
         public async Task<Output> Handle(RegisterVehicleCommand request, CancellationToken cancellationToken)
@@ -32,7 +32,6 @@ namespace Application.CommandHandlers.RegisterVehicle
                 NumberOfDoors = request.NumberOfDoors,
                 Mileage = request.Mileage,
                 Price = request.Price,
-                ManufacturingDate = request.ManufacturingDate,
                 Status = SaleStatus.Available
             };
 

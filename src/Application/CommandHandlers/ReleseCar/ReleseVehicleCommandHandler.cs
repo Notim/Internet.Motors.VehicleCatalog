@@ -5,18 +5,18 @@ using Domain;
 using MediatR;
 using Notim.Outputs;
 
-namespace Application.CommandHandlers.ReserveCar
+namespace Application.CommandHandlers.ReleseCar
 {
-    public class ReserveVehicleCommandHandler : IRequestHandler<ReserveVehicleCommand, Output>
+    public class ReleaseVehicleCommandHandler : IRequestHandler<ReleaseVehicleCommand, Output>
     {
         private readonly IVehicleRepository _vehicleRepository;
 
-        public ReserveVehicleCommandHandler(IVehicleRepository vehicleRepository)
+        public ReleaseVehicleCommandHandler(IVehicleRepository vehicleRepository)
         {
             _vehicleRepository = vehicleRepository;
         }
 
-        public async Task<Output> Handle(ReserveVehicleCommand request, CancellationToken cancellationToken)
+        public async Task<Output> Handle(ReleaseVehicleCommand request, CancellationToken cancellationToken)
         {
             var output = new Output();
 
@@ -28,31 +28,31 @@ namespace Application.CommandHandlers.ReserveCar
                 return output;
             }
 
-            if (vehicle.Status == SaleStatus.Reserved)
+            if (vehicle.Status == SaleStatus.Available)
             {
-                output.AddFault(new Fault(FaultType.InvalidOperation, $"Vehicle with ID {request.VehicleId} is already reserved."));
+                output.AddFault(new Fault(FaultType.InvalidOperation, $"Vehicle with ID {request.VehicleId} is already available."));
                 return output;
             }
 
-            if (vehicle.Status != SaleStatus.Available)
+            if (vehicle.Status != SaleStatus.Reserved)
             {
-                output.AddFault(new Fault(FaultType.InvalidOperation, $"Vehicle with ID {request.VehicleId} is not available for reservation."));
+                output.AddFault(new Fault(FaultType.InvalidOperation, $"Vehicle with ID {request.VehicleId} is not available for release."));
                 return output;
             }
 
-            vehicle.ReserveVehicle();
+            vehicle.ReleaseVehicle();
 
             var updateResult = await _vehicleRepository.UpdateVehicleAsync(vehicle);
 
             if (!updateResult)
             {
-                output.AddFault(new Fault(FaultType.InvalidOperation, $"Failed to reserve the vehicle with ID {request.VehicleId}."));
+                output.AddFault(new Fault(FaultType.InvalidOperation, $"Failed to release the vehicle with ID {request.VehicleId}."));
                 return output;
             }
 
             // TODO: publish message on kafka topic car-reserved
 
-            output.AddMessage($"Vehicle with ID {request.VehicleId} successfully reserved.");
+            output.AddMessage($"Vehicle with ID {request.VehicleId} successfully released.");
             return output;
         }
     }

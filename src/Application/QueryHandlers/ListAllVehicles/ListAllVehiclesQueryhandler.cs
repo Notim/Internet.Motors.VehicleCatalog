@@ -15,7 +15,7 @@ namespace Application.QueryHandlers.ListAllVehicles
 
         public ListAllVehiclesQueryHandler(IVehicleRepository vehicleRepository)
         {
-            _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
+            _vehicleRepository = vehicleRepository;
         }
 
         public async Task<Output<IEnumerable<VehicleViewModel>>> Handle(ListAllVehiclesQuery request, CancellationToken cancellationToken)
@@ -48,7 +48,7 @@ namespace Application.QueryHandlers.ListAllVehicles
                     NumberOfDoors = vehicle.NumberOfDoors,
                     Mileage = vehicle.Mileage,
                     Price = vehicle.Price,
-                    SaleStatus = vehicle.Status.ToString(),
+                    Status = vehicle.Status.ToString(),
                     IsReserved = vehicle.IsReserved,
                     SaleDate = vehicle.SaleDate
                 });

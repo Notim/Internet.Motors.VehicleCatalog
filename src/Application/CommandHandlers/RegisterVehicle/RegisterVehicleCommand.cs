@@ -5,7 +5,7 @@ using Notim.Outputs;
 namespace Application.CommandHandlers.RegisterVehicle
 {
 
-    public class RegisterVehicleCommand : IRequest<Output>
+    public record RegisterVehicleCommand : IRequest<Output>
     {
 
         public string CarName { get; set; }
@@ -25,8 +25,6 @@ namespace Application.CommandHandlers.RegisterVehicle
         public decimal Mileage { get; set; }
 
         public decimal Price { get; set; }
-
-        public DateTime? ManufacturingDate { get; set; }
 
     }
 

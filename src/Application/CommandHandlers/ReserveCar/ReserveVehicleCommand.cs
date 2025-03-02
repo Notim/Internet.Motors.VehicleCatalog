@@ -1,11 +1,10 @@
-using System;
 using MediatR;
 using Notim.Outputs;
 
 namespace Application.CommandHandlers.ReserveCar
 {
 
-    public class ReserveVehicleCommand : IRequest<Output>
+    public record ReserveVehicleCommand : IRequest<Output>
     {
 
         public string? CustomerDocument { get; set; }
