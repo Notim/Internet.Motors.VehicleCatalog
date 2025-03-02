@@ -33,8 +33,25 @@ jobs:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
       
-      - name: Upload Code Coverage
-        uses: actions/upload-artifact@v4
+      # Step 6: Locate and Upload the Coverage Report
+      - name: Find and Upload Code Coverage Results
+        run: |
+          # Find the coverage.cobertura.xml file no matter the GUID folder name
+          COVERAGE_FILE=$(find TestResults -name 'coverage.cobertura.xml' | head -n 1)
+          echo "Coverage report located at: $COVERAGE_FILE"
+          echo "COVERAGE_FILE_PATH=$COVERAGE_FILE" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Upload Code Coverage Results
+        uses: actions/upload-artifact@v3
         with:
-          name: code-coverage-report
-          path: ./TestResults
+          name: code-coverage
+          path: ${{ env.COVERAGE_FILE_PATH }}
+          
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./TestResults/coverage.cobertura.xml
+          flags: unittests
+          name: CodeCoverageReport
+          fail_ci_if_error: false
