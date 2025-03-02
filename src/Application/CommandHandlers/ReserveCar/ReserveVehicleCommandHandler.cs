@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Services.CreateNewOrderService;
 using Domain;
 using MediatR;
 using Notim.Outputs;
@@ -10,10 +11,15 @@ namespace Application.CommandHandlers.ReserveCar
     public class ReserveVehicleCommandHandler : IRequestHandler<ReserveVehicleCommand, Output>
     {
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly ICreateNewOrderService _createNewOrderService;
 
-        public ReserveVehicleCommandHandler(IVehicleRepository vehicleRepository)
+        public ReserveVehicleCommandHandler(
+            IVehicleRepository vehicleRepository,
+            ICreateNewOrderService createNewOrderService
+        )
         {
             _vehicleRepository = vehicleRepository;
+            _createNewOrderService = createNewOrderService;
         }
 
         public async Task<Output> Handle(ReserveVehicleCommand request, CancellationToken cancellationToken)
@@ -50,7 +56,16 @@ namespace Application.CommandHandlers.ReserveCar
                 return output;
             }
 
-            // TODO: publish message on kafka topic car-reserved
+            await _createNewOrderService.CreateNewOrderAsync(
+                new CreateNewOrder(
+                    orderId: Guid.NewGuid(), 
+                    vehicleId: vehicle.VehicleId,
+                    customerDocument: request.CustomerDocument,
+                    carName: vehicle.CarName,
+                    price: vehicle.Price!.Value
+                ), 
+                cancellationToken
+            );
 
             output.AddMessage($"Vehicle with ID {request.VehicleId} successfully reserved.");
             return output;

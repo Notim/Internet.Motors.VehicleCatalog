@@ -1,9 +1,14 @@
 using System.Globalization;
 using Application.CommandHandlers.RegisterVehicle;
+using Application.Services.CreateNewOrderService;
+using Confluent.Kafka;
 using Data.Configs;
 using Data.Repositories;
 using Domain;
+using Internet.Motors.VehicleCatalog.Consumers;
 using MediatR;
+using Messaging.Producer;
+using Messaging.Services;
 using Microsoft.AspNetCore.Localization;
 
 
@@ -17,10 +22,17 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
         
         builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
+        
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
+        
+        builder.Services.Configure<ConsumerConfig>(builder.Configuration.GetSection(nameof(ConsumerConfig)));
+        builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
+        builder.Services.AddHostedService<ReleaseVehicleConsumer>();
+
+        builder.Services.AddScoped<IKafkaProducer<CreateNewOrder>, MessageProducer<CreateNewOrder>>(); 
+        builder.Services.AddScoped<ICreateNewOrderService, CreateNewOrderService>();
         
         builder.Services.Configure<DatabaseConfig>(
             builder.Configuration.GetSection(nameof(DatabaseConfig))

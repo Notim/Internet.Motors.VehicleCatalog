@@ -27,13 +27,13 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - kafka_network
-  
+
   init-kafka:
     container_name: internet_motors_init_kafka
     image: confluentinc/cp-kafka:7.5.0
@@ -46,17 +46,17 @@ services:
     entrypoint: [ '/bin/sh', '-c']
     command: |
       "
-      kafka-topics --bootstrap-server kafka:9092 --list
-      echo -e 'Creating kafka topics'      
-      kafka-topics --create --topic car-reserved --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1
-      kafka-topics --create --topic order-canceled --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1
-      kafka-topics --create --topic order-finalized --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1
-      kafka-topics --create --topic order-created --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1
-      kafka-topics --create --topic payment-confirmed --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1
-      kafka-topics --create --topic payment-expired --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1
-      kafka-topics --create --topic payment-code-email-sender --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1      
+      kafka-topics --bootstrap-server kafka:29092 --list
+      echo -e 'Creating kafka topics'
+      kafka-topics --create --topic car-reserved --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1
+      kafka-topics --create --topic order-canceled --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1
+      kafka-topics --create --topic order-finalized --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1
+      kafka-topics --create --topic order-created --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1
+      kafka-topics --create --topic payment-confirmed --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1
+      kafka-topics --create --topic payment-expired --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1
+      kafka-topics --create --topic payment-code-email-sender --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1
       echo -e 'topics created with Successfully '
-      kafka-topics --bootstrap-server kafka:9092 --list
+      kafka-topics --bootstrap-server kafka:29092 --list
       "
     networks:
       - kafka_network
@@ -69,7 +69,7 @@ services:
     depends_on:
       - kafka
     environment:
-      KAFKA_BROKERCONNECT: "kafka:9092"
+      KAFKA_BROKERCONNECT: "kafka:29092"
     networks:
       - kafka_network
 
