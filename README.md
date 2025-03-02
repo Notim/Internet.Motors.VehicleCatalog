@@ -11,7 +11,7 @@ Esse projeto consiste na gestão de Veículos à venda, são duas aplicações, 
 Antes de executar o projeto, é importante garantir que os seguintes pré-requisitos estejam instalados e configurados:
 
 1. **.NET 8.0 SDK**:
-    - Certifique-se de ter o SDK do .NET 8.0 instalado em sua máquina.
+    - Certifique-se de ter o SDK do `.NET 8.0` instalado na sua máquina.
     - [Download .NET SDK](https://dotnet.microsoft.com/download/dotnet).
 
 2. **Docker**:
@@ -30,9 +30,9 @@ Antes de executar o projeto, é importante garantir que os seguintes pré-requis
 
 ### Dependencias Externas
 
-- **Apache Kafka**: Broker de mensageria avançado, administra tópicos, particões e Grupos de Consumidores
-- **Microsoft SQL Server**: Base de dados principal da aplicação, armazena os dados de forma segura e confiável
-- **Redis**: Base de dados NoSql baseado em memória, suporte uma grande quantidade de requisições armazena os dados em memória assim diminuindo a latência de resposta
+- **`Apache Kafka`**: Broker de mensageria avançado, administra tópicos, particões e Grupos de Consumidores
+- **`Microsoft SQL Server`**: Base de dados principal da aplicação, armazena os dados de forma segura e confiável
+- **`Redis`**: Base de dados NoSql baseado em memória, suporte uma grande quantidade de requisições armazena os dados em memória assim diminuindo a latência de resposta
 
 ### WebApi
 
@@ -46,12 +46,12 @@ consumidos por aplicações externas ou ferramentas como Postman.
 - **Atualização e Exclusão**: Suporte para a edição ou remoção de veículos já cadastrados.
 - **Consulta de Veículos**: Fornece endpoints para buscar veículos com base em diferentes critérios, como ID, tipo ou
   status.
-- **Swagger para Documentação**: Interface interativa disponível para testar e visualizar os endpoints.
+- **Swagger para Documentação**: "Interface" interativa disponível para testar e visualizar os endpoints.
 
 ### Consumers
 
 A aplicação `Consumers` é uma aplicação de backend responsável por processar mensagens provenientes de um broker Kafka.
-Ela faz isso ouvindo eventos que são publicados em tópicos específicos no Kafka e realizando ações baseadas nessas
+Ela faz isso ouvindo eventos publicados em tópicos específicos no Kafka e realizando ações baseadas nessas
 mensagens.
 
 #### Principais Funcionalidades
@@ -72,8 +72,8 @@ mensagens.
 #### Fluxo de Execução
 
 1. A aplicação inicia o consumidor Kafka e se conecta ao broker configurado.
-2. Para cada mensagem recebida do `order-canceled` e `order-finalized`, a aplicação invoca os handlers correspondentes através de MediatR.
-3. Após o processamento, a aplicação registra o sucesso ou reporta falhas no log.
+2. Para cada mensagem recebida do `order-canceled` e `order-finalized`, a aplicação invoca os handlers correspondentes através de `MediatR`.
+3. Após o processamento, a aplicação registra o sucesso ou reporta falhas no `log`.
 
 #### Configuração do Consumidor
 
@@ -93,7 +93,7 @@ consumidores e a política de leitura de offset. Exemplo:
 
 #### Requisitos para Executar a Aplicação
 
-- Kafka deve estar configurado e rodando na máquina local ou em um ambiente remoto.
+- Kafka deve estar configurado e rodando na máquina local ou num ambiente remoto.
 - O tópico `order-canceled` e `order-finalized` precisa existir no Kafka.
 - Certifique-se de que o endereço do servidor Kafka está configurado corretamente no `appsettings.json`.
 
@@ -112,8 +112,8 @@ O módulo `Core.Domain` é responsável pelo núcleo do domínio da aplicação 
 
 - **Entidades**: Representam os objetos reais do domínio (como `Vehicle`).
 - **Agregados e Value Objects**: Implementação de conceitos DDD.
-- **Interfaces de Repositórios**: Contratos que definem como interagir com o armazenamento persistente.
-- **Serviços de Domínio**: Contêm lógica específica do domínio que não se encaixa diretamente em uma entidade ou agregado.
+- **‘Interfaces’ de Repositórios**: Contratos que definem como interagir com o armazenamento persistente.
+- **Serviços de Domínio**: Contêm lógica específica do domínio que não se encaixa diretamente numa entidade ou agregado.
 
 Este módulo possui **dependência mínima** de outros projetos, permitindo maior autonomia do domínio.
 
@@ -128,7 +128,7 @@ O módulo `Core.Application` implementa a lógica de aplicação e regras de neg
 - **Consultas e Handlers**:
     - Manipulam requisições de leitura de dados, oferecendo resultados baseados nos critérios fornecidos.
 - **Serviços de Integração**:
-    - Interfaces para ferramentas externas (e.g., serviços de mensageria).
+    - ‘Interfaces’ para ferramentas externas (e.g., serviços de mensageria).
 
 O `Core.Application` utiliza a biblioteca **MediatR** para desacoplar os handlers de comandos/consultas das implementações.
 
@@ -169,7 +169,7 @@ Essa camada serve como ponto de conexão entre a aplicação e o broker Kafka.
 O módulo `Presentation.WebApi` é a camada responsável por expor as funcionalidades do sistema por meio de uma API RESTful. Contém:
 
 - **Controllers**:
-    - Implementam os endpoints que servem como interface para comunicação com o sistema.
+    - Implementam os endpoints que servem como ‘interface’ para comunicação com o sistema.
 - **Middleware**:
     - Configurações de segurança e tratamento genérico de exceções.
 - **Documentação Swagger**:
@@ -184,13 +184,13 @@ Esse módulo está posicionado como **gateway** para interagir com as funcionali
 O módulo `Presentation.Consumers` é responsável por processar eventos de forma assíncrona escutando mensagens de tópicos Kafka. Contém:
 
 - **Configuradores de Consumo**:
-    - Implementa o consumidor Kafka com estratégias de retry e log de falhas.
+    - Implementa o consumidor Kafka com estratégias de retry e ‘log’ de falhas.
 - **Handlers**:
-    - Traduz mensagens recebidas em comandos e delega para o Core.Application.
+    - Traduz mensagens recebidas em comandos e delega para o `Core.Application`.
 - **Configuração Baseada em DI (Dependency Injection)**:
     - Suporte para escopos e injeções necessárias para processar mensagens.
 
-Enquanto o `Presentation.WebApi` manipula a interface síncrona, o módulo `Presentation.Consumers` foca no processamento assíncrono.
+Enquanto o `Presentation.WebApi` manipula a ‘interface’ síncrona, o módulo `Presentation.Consumers` foca no processamento assíncrono.
 
 ---
 
@@ -217,19 +217,20 @@ Com essa estrutura em camadas, o projeto segue os princípios de separação de 
 ---
 
 
-# Script SQL de Configuração do Banco de Dados: VEHICLE_CATALOG
+# ‘Script’ SQL de Configuração do Banco de Dados: VEHICLE_CATALOG
 
-o script está na pasta Data/Scripts/database_sql.sql é utilizado para configurar o banco de dados **VEHICLE_CATALOG**, utilizado no sistema de gerenciamento de Catálogo de Veículos. Ele cria o banco de dados, bem como sua principal tabela, `VEHICLE`, com todas as colunas necessárias para armazenamento e consulta de informações sobre veículos cadastrados.
+o ‘script’ está na pasta `Data/Scripts/database_sql.sql` é utilizado para configurar o banco de dados **VEHICLE_CATALOG**, utilizado no sistema de gestão de Catálogo de Veículos. 
+Ele cria o banco de dados, bem como a tabela principal, `VEHICLE`, com todas as colunas necessárias para armazenamento e consulta de informações sobre veículos cadastrados.
 
 ---
 
 ## Funcionalidades
 
 1. **Criação do Banco de Dados**:
-    - O script cria o banco de dados chamado `VEHICLE_CATALOG`.
+    - O ‘script’ cria o banco de dados chamado `VEHICLE_CATALOG`.
 
 2. **Seleção do Banco de Dados**:
-    - Após a criação, o script seleciona o banco de dados recém-criado.
+    - Após a criação, o ‘script’ seleciona o banco de dados recém-criado.
 
 3. **Criação da Tabela `VEHICLE`**:
     - Define uma tabela com diversas colunas que armazenam informações detalhadas sobre os veículos, como identificadores únicos, nome, marca, modelo, características e dados de venda.
@@ -267,16 +268,16 @@ Certifique-se de que você tenha permissões para criar bancos de dados e tabela
 
 ### Pré-requisitos
 - Instância do SQL Server configurada e acessível.
-- Cliente SQL (como SQL Server Management Studio ou Azure Data Studio) ou integração com o ambiente de execução (como via script no backend).
+- Cliente SQL (como `SQL Server Management Studio` ou `Azure Data Studio`) ou integração com o ambiente de execução (como via ‘script’ no backend).
 
 ---
 
 ## Como Executar o Script
 
-1. Abra um cliente SQL ou ferramenta conectada à instância do SQL Server.
+1. Abra um cliente SQL ou ferramenta conectada à instância do `SQL Server`.
 2. Carregue o script `database_sql.sql`.
-3. Execute o script em um ambiente seguro:
-    - Certifique-se de que o banco de dados `VEHICLE_CATALOG` ainda não exista (ou revise o script para evitar sobrescrição indesejada).
+3. Execute o ‘script’ num ambiente seguro:
+    - Certifique-se de que o banco de dados `VEHICLE_CATALOG` ainda não exista (ou reveja o ‘script’ para evitar sobrescrição indesejada).
 4. Após executar, confirme se o banco de dados e a tabela foram criados corretamente:
     - Use o comando `USE VEHICLE_CATALOG` para verificar a existência do banco.
     - Execute uma consulta como `SELECT * FROM VEHICLE` para verificar a estrutura da tabela.
