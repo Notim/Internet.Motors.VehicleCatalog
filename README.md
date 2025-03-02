@@ -91,6 +91,122 @@ consumidores e a política de leitura de offset. Exemplo:
 Com esta arquitetura, a aplicação `Consumers` garante um processamento eficiente de eventos relacionados a cancelamentos
 de ordens, integrando mensagens do Kafka ao domínio do catálogo de veículos.
 
+# Estrutura do Projeto
+
+O projeto segue uma arquitetura baseada em Clean Architecture, separação de responsabilidades, com os seguintes módulos principais:
+
+---
+
+## 1. Core.Domain
+
+O módulo `Core.Domain` é responsável pelo núcleo do domínio da aplicação e contém:
+
+- **Entidades**: Representam os objetos reais do domínio (como `Vehicle`).
+- **Agregados e Value Objects**: Implementação de conceitos DDD.
+- **Interfaces de Repositórios**: Contratos que definem como interagir com o armazenamento persistente.
+- **Serviços de Domínio**: Contêm lógica específica do domínio que não se encaixa diretamente em uma entidade ou agregado.
+
+Este módulo possui **dependência mínima** de outros projetos, permitindo maior autonomia do domínio.
+
+---
+
+## 2. Core.Application
+
+O módulo `Core.Application` implementa a lógica de aplicação e regras de negócio utilizando o padrão CQRS. Ele contém:
+
+- **Comandos e Handlers**:
+    - Gerenciam operações que modificam o estado do sistema, como criação, edição e exclusão de veículos.
+- **Consultas e Handlers**:
+    - Manipulam requisições de leitura de dados, oferecendo resultados baseados nos critérios fornecidos.
+- **Serviços de Integração**:
+    - Interfaces para ferramentas externas (e.g., serviços de mensageria).
+
+O `Core.Application` utiliza a biblioteca **MediatR** para desacoplar os handlers de comandos/consultas das implementações.
+
+---
+
+## 3. Infrastructure.Data
+
+O módulo `Infrastructure.Data` cuida da implementação de acesso ao banco de dados e persistência. Contém:
+
+- **Implementações de Repositório**:
+    - Fornecem conectores para o banco de dados SQL por meio de **Entity Framework Core**.
+- **Configurações de Mapeamento**:
+    - Todas as entidades do domínio são configuradas utilizando Fluent API.
+- **Migrations**:
+    - Gerencia a criação e manutenção do schema do banco de dados.
+
+Este módulo é a camada que comunica diretamente com o SQL Server para persistir e consultar os dados.
+
+---
+
+## 4. Infrastructure.Messaging
+
+O módulo `Infrastructure.Messaging` gerencia toda a integração com serviços de mensageria (como Kafka). Ele inclui:
+
+- **Produtores**:
+    - Publicam mensagens nos tópicos configurados no broker Kafka.
+- **Consumidores**:
+    - Escutam mensagens em tópicos específicos e as encaminham para os handlers apropriados no domínio.
+- **Configurações**:
+    - Configura o cliente Kafka e defines estratégias de escuta/publicação.
+
+Essa camada serve como ponto de conexão entre a aplicação e o broker Kafka.
+
+---
+
+## 5. Presentation.WebApi
+
+O módulo `Presentation.WebApi` é a camada responsável por expor as funcionalidades do sistema por meio de uma API RESTful. Contém:
+
+- **Controllers**:
+    - Implementam os endpoints que servem como interface para comunicação com o sistema.
+- **Middleware**:
+    - Configurações de segurança e tratamento genérico de exceções.
+- **Documentação Swagger**:
+    - Permite aos desenvolvedores testar os endpoints de maneira interativa.
+
+Esse módulo está posicionado como **gateway** para interagir com as funcionalidades do backend.
+
+---
+
+## 6. Presentation.Consumers
+
+O módulo `Presentation.Consumers` é responsável por processar eventos de forma assíncrona escutando mensagens de tópicos Kafka. Contém:
+
+- **Configuradores de Consumo**:
+    - Implementa o consumidor Kafka com estratégias de retry e log de falhas.
+- **Handlers**:
+    - Traduz mensagens recebidas em comandos e delega para o Core.Application.
+- **Configuração Baseada em DI (Dependency Injection)**:
+    - Suporte para escopos e injeções necessárias para processar mensagens.
+
+Enquanto o `Presentation.WebApi` manipula a interface síncrona, o módulo `Presentation.Consumers` foca no processamento assíncrono.
+
+---
+
+## Relação entre os Módulos
+
+Abaixo está uma visão simplificada de como os módulos se relacionam:
+
+```plaintext
+Core
+    Application
+    Domain
+Infrastructure
+    Data
+    Messaging
+Presentation
+    WebApi
+    Consumers
+```
+
+---
+
+Com essa estrutura em camadas, o projeto segue os princípios de separação de responsabilidades (SRP) e inversão de dependência (DIP), permitindo maior flexibilidade e manutenção.
+
+---
+
 
 # Script SQL de Configuração do Banco de Dados: VEHICLE_CATALOG
 
