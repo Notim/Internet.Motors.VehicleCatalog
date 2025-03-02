@@ -15,7 +15,7 @@ Antes de executar o projeto, é importante garantir que os seguintes pré-requis
     - [Download .NET SDK](https://dotnet.microsoft.com/download/dotnet).
 
 2. **Docker**:
-    - Necessário para configurar o broker Kafka (se não estiver disponível localmente).
+    - Necessário para configurar o broker Kafka, sql server e Redis (se não estiver disponível localmente).
     - [Download Docker](https://www.docker.com/products/docker-desktop).
 
 5. **Ferramentas de Desenvolvimento**:
@@ -25,6 +25,14 @@ Antes de executar o projeto, é importante garantir que os seguintes pré-requis
         - Visual Studio Code (com extensão C#).
 
 --- 
+
+# Aplicações
+
+### Dependencias Externas
+
+- **Apache Kafka**: Broker de mensageria avançado, administra tópicos, particões e Grupos de Consumidores
+- **Microsoft SQL Server**: Base de dados principal da aplicação, armazena os dados de forma segura e confiável
+- **Redis**: Base de dados NoSql baseado em memória, suporte uma grande quantidade de requisições armazena os dados em memória assim diminuindo a latência de resposta
 
 ### WebApi
 
@@ -76,8 +84,9 @@ consumidores e a política de leitura de offset. Exemplo:
 {
   "ConsumerConfig": {
     "BootstrapServers": "localhost:9092",
-    "GroupId": "vehicle-catalog-consumer-group",
-    "AutoOffsetReset": "Earliest"
+    "GroupId": "internet-motors-vehicle-catalog",
+    "AutoOffsetReset": "Earliest",
+    "EnableAutoCommit": true
   }
 }
 ```
@@ -130,13 +139,13 @@ O `Core.Application` utiliza a biblioteca **MediatR** para desacoplar os handler
 O módulo `Infrastructure.Data` cuida da implementação de acesso ao banco de dados e persistência. Contém:
 
 - **Implementações de Repositório**:
-    - Fornecem conectores para o banco de dados SQL por meio de **Entity Framework Core**.
-- **Configurações de Mapeamento**:
-    - Todas as entidades do domínio são configuradas utilizando Fluent API.
-- **Migrations**:
-    - Gerencia a criação e manutenção do schema do banco de dados.
+    - Implementação do Repository Pattern no DDD, ele vai contido as regras de Coleção de dados e Gestão dos dados do Dominio.
+- **Implementações de Dao(Data Access Object)**:
+    - Fornecem conectores para o banco de dados SQL por meio do **Dapper** e *ADO.NET*.
+- **Implementações de Cache**:
+    - Fornecem conectores para o banco de dados NoSQL Redis por meio do **Redis**.
 
-Este módulo é a camada que comunica diretamente com o SQL Server para persistir e consultar os dados.
+Este módulo é a camada que comunica diretamente com o SQL Server e Redis para persistir e consultar os dados.
 
 ---
 
@@ -312,6 +321,7 @@ cd <NOME_DO_DIRETORIO_CLONADO>
 Caso todos os serviços precisem ser executados em contêineres, configure um arquivo `docker-compose.yml` que inclua:
 - SQL Server.
 - Kafka e Zookeeper.
+- Redis
 - As aplicações WebApi e Consumers.
 
 Execute o seguinte comando na pasta contendo o `docker-compose.yml`:
@@ -324,21 +334,29 @@ docker-compose up
 
 ### Configurar as Variáveis do Ambiente
 
-Certifique-se de configurar o arquivo `appsettings.json` com as informações do seu SQL Server e Kafka. Exemplo:
+Certifique-se de configurar o arquivo `appsettings.json` com as informações do seu SQL Server, Kafka e redis
 
 ```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=VEHICLE_CATALOG;User Id=<USUARIO>;Password=<SENHA>;"
-},
-"ConsumerConfig": {
-  "BootstrapServers": "localhost:9092",
-  "GroupId": "vehicle-catalog-consumer-group",
-  "AutoOffsetReset": "Earliest"
-},
-"ProducerConfig": {
-  "BootstrapServers": "localhost:9092",
-  "GroupId": "vehicle-catalog-consumer-group",
-  "AutoOffsetReset": "Earliest"
+{
+  "DatabaseConfig": {
+    "ConnectionString": "Server=localhost,1433;Database=VEHICLE_CATALOG;User Id=SA;Password=Admin@12345;TrustServerCertificate=True;",
+    "Timeout": 30
+  },
+  "ConnectionStrings": {
+    "RedisConnection": "localhost:6379"
+  },
+  "ProducerConfig": {
+    "BootstrapServers": "localhost:9092",
+    "GroupId": "internet-motors-vehicle-catalog",
+    "AutoOffsetReset": "Earliest",
+    "EnableAutoCommit": true
+  },
+  "ConsumerConfig": {
+    "BootstrapServers": "localhost:9092",
+    "GroupId": "internet-motors-vehicle-catalog",
+    "AutoOffsetReset": "Earliest",
+    "EnableAutoCommit": true
+  }
 }
 ```
 
