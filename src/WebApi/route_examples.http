@@ -3,17 +3,21 @@ Accept: */*
 Content-Type: application/json
 
 {
-  "carName": "320i",
-  "brand": "BMW",
-  "model": "2.0 turbo",
+  "carName": "308",
+  "brand": "Peugeout",
+  "model": "Peugeou 308 1.6 16v active pack",
   "year": 2015,
-  "color": "black",
-  "fuelType": "gas",
+  "color": "white",
+  "fuelType": "Flex",
   "numberOfDoors": 4,
-  "mileage": 98000,
-  "price": 68000,
-  "manufacturingDate": null
+  "mileage": 1166551,
+  "price": 52000
 }
+
+###
+
+GET https://localhost:5001/api/vehicle
+Accept: */*
 
 ### 
 
@@ -22,36 +26,21 @@ Accept: */*
 
 ###
 
-GET https://localhost:5001/api/vehicle
+GET https://localhost:5001/api/vehicle?saleStatus=1
+Accept: */*
+
+### 
+
+GET https://localhost:5001/api/vehicle?saleStatus=2
 Accept: */*
 
 ###
 
-POST https://localhost:5001/api/vehicle/552e9913-573c-4bb9-9bb7-78395e31a57a/reserve
+POST https://localhost:5001/api/vehicle/1d81f35f-1f8b-442c-a348-7319f541f7bf/reserve
 Accept: */*
 Content-Type: application/json
 
 {
   "customerDocument": "465351802",
-  "vehicleId": "552e9913-573c-4bb9-9bb7-78395e31a57a"
-}
-
-###
-
-POST https://localhost:5001/api/vehicle/1ecbfa0f-545c-41a3-886f-6964d967fea3/sell
-Accept: */*
-Content-Type: application/json
-
-{
-  "vehicleId": "706c6fee-f1d5-4d5d-a0b8-6dfeedb11c93"
-}
-
-###
-
-POST https://localhost:5001/api/vehicle/552e9913-573c-4bb9-9bb7-78395e31a57a/release
-Accept: */*
-Content-Type: application/json
-
-{
-  "vehicleId": "552e9913-573c-4bb9-9bb7-78395e31a57a"
+  "vehicleId": "1d81f35f-1f8b-442c-a348-7319f541f7bf"
 }
