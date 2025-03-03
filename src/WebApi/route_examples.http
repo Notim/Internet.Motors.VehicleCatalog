@@ -11,7 +11,7 @@ Content-Type: application/json
   "fuelType": "Flex",
   "numberOfDoors": 4,
   "mileage": 1166551,
-  "price": 52000
+  "price": 42000
 }
 
 ###
@@ -36,11 +36,11 @@ Accept: */*
 
 ###
 
-POST https://localhost:5001/api/vehicle/1d81f35f-1f8b-442c-a348-7319f541f7bf/reserve
+POST https://localhost:5001/api/vehicle/881c6023-138b-4ef0-9b72-ecdb75c52c88/reserve
 Accept: */*
 Content-Type: application/json
 
 {
   "customerDocument": "465351802",
-  "vehicleId": "1d81f35f-1f8b-442c-a348-7319f541f7bf"
+  "vehicleId": "881c6023-138b-4ef0-9b72-ecdb75c52c88"
 }

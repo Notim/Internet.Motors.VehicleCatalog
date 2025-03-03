@@ -420,3 +420,10 @@ dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
 ```
 
 ![img_2.png](img_2.png)
+
+
+---
+
+# Links
+**projeto arquitetural Miro (precisa pedir acesso):** [miro.com](https://miro.com/app/board/uXjVLFKmbks=/)  
+**Video de explicação do projeto:** [youtu.be](https://youtu.be/tSQz57fFRGU)  
