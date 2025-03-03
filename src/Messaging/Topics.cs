@@ -3,7 +3,7 @@ namespace Messaging;
 public static class Topics
 {
 
-    public static string OrderCreatedTopic => "order-created";
+    public static string CarReserved => "car-reserved";
 
     public static string OrderFinalizedTopic => "order-finalized";
 

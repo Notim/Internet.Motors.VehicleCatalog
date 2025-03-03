@@ -26,7 +26,7 @@ public class CreateNewOrderService : ICreateNewOrderService
 
             var sent = await _kafkaProducer.ProduceAsync(
                 new Envelop<CreateNewOrder>(
-                    topic: Topics.OrderCreatedTopic,
+                    topic: Topics.CarReserved,
                     key: createNewOrder.OrderId.ToString(),
                     value: createNewOrder,
                     headers: new Dictionary<string, byte[]>()
